@@ -1,0 +1,34 @@
+﻿<Window
+    x:Class="MT_MusicPlayer.Views.Controller"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:MT_MusicPlayer.ViewModels"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:behavior="clr-namespace:MT_MusicPlayer.Behaviors"
+    xmlns:local="clr-namespace:MT_MusicPlayer"
+    mc:Ignorable="d"
+    Title="MainWindow" Height="450" Width="800"
+    AllowDrop="True">
+    <Window.DataContext>
+        <vm:ControllerViewModel/>
+    </Window.DataContext>
+    <i:Interaction.Behaviors>
+        <behavior:ControllerBehavior/>
+    </i:Interaction.Behaviors>
+
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel Orientation="Vertical">
+            <Label Content="{Binding Name}"/>
+            <TextBlock Text="{Binding CurrentTime, StringFormat={}{0:hh':'mm':'ss}}"/>
+            <TextBlock Text="{Binding TotalTime, StringFormat={}{0:hh':'mm':'ss}}"/>
+            <Slider
+                Width="500"
+                Maximum="{Binding TotalTime, 
+                Converter={StaticResource TimeSpanToDoubleConverter}}"
+                Value="{Binding CurrentTime, 
+                Converter={StaticResource TimeSpanToDoubleConverter}}"/>
+        </StackPanel>
+    </Grid>
+</Window>
