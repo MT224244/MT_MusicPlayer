@@ -7,6 +7,7 @@
     xmlns:vm="clr-namespace:MT_MusicPlayer.ViewModels"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:behavior="clr-namespace:MT_MusicPlayer.Behaviors"
+    xmlns:tb="http://www.hardcodet.net/taskbar"
     xmlns:local="clr-namespace:MT_MusicPlayer"
     mc:Ignorable="d"
     Title="MainWindow" Height="450" Width="800"
@@ -18,17 +19,34 @@
         <behavior:ControllerBehavior/>
     </i:Interaction.Behaviors>
 
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
         <StackPanel Orientation="Vertical">
             <Label Content="{Binding Name}"/>
-            <TextBlock Text="{Binding CurrentTime, StringFormat={}{0:hh':'mm':'ss}}"/>
-            <TextBlock Text="{Binding TotalTime, StringFormat={}{0:hh':'mm':'ss}}"/>
+            <TextBlock>
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0:hh':'mm':'ss} / {1:hh':'mm':'ss}">
+                        <Binding Path="CurrentTime"/>
+                        <Binding Path="TotalTime"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
             <Slider
-                Width="500"
+                Width="{Binding Width, RelativeSource={RelativeSource AncestorType=Grid}}"
                 Maximum="{Binding TotalTime, 
                 Converter={StaticResource TimeSpanToDoubleConverter}}"
                 Value="{Binding CurrentTime, 
-                Converter={StaticResource TimeSpanToDoubleConverter}}"/>
+                Converter={StaticResource TimeSpanToDoubleConverter}, Mode=TwoWay}"/>
+            <Button Content="Play" Command="{Binding PlayCommand}"/>
+            <Button Content="Pause" Command="{Binding PauseCommand}"/>
+            <Button Content="Stop" Command="{Binding StopCommand}"/>
         </StackPanel>
+        <tb:TaskbarIcon ToolTipText="MT MusicPlayer">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="表示" Command="{Binding ShowControllerCommand}"/>
+                    <MenuItem Header="終了" Command="{Binding ExitCommand}"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
     </Grid>
 </Window>

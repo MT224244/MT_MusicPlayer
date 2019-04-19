@@ -42,7 +42,7 @@ namespace MT_MusicPlayer.Models
                 OnPropertyChanged(nameof(CurrentTime));
             }
         }
-        private TimeSpan _CurrentTime;
+        private TimeSpan _CurrentTime = TimeSpan.Zero;
 
         /// <summary>
         /// 曲の時間
@@ -56,21 +56,33 @@ namespace MT_MusicPlayer.Models
                 OnPropertyChanged(nameof(TotalTime));
             }
         }
-        private TimeSpan _TotalTime;
+        private TimeSpan _TotalTime = TimeSpan.Zero;
 
         #endregion
 
+        public static ControllerModel Instance = Instance ?? new ControllerModel();
+
         // コンストラクタ
-        public ControllerModel()
+        private ControllerModel()
         {
             DispatcherTimer timer = new DispatcherTimer(
-                interval: TimeSpan.FromMilliseconds(10),
-                priority: DispatcherPriority.Send,
-                callback: Timer_Tick,
+                interval:   TimeSpan.FromMilliseconds(10),
+                priority:   DispatcherPriority.Send,
+                callback:   Timer_Tick,
                 dispatcher: Dispatcher.CurrentDispatcher);
 
             timer.Start();
         }
+
+        public void Play() => SoundManager.Play();
+
+        public void Pause() => SoundManager.Pause();
+
+        public void Stop() => SoundManager.Stop();
+
+        public void ShowController() => MessagingCenter.Send(this, "ShowController");
+
+        public void Exit() => AppMain.Exit();
 
         /// <summary>
         /// タイマー

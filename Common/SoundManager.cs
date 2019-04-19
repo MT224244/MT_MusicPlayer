@@ -31,12 +31,12 @@ namespace MT_MusicPlayer.Common
         /// <summary>
         /// 現在の再生時間
         /// </summary>
-        public static TimeSpan CurrentTime => (Reader != null) ? Reader.CurrentTime : TimeSpan.MinValue;
+        public static TimeSpan CurrentTime => (Reader != null) ? Reader.CurrentTime : TimeSpan.Zero;
 
         /// <summary>
         /// 曲の長さ
         /// </summary>
-        public static TimeSpan TotalTime => (Reader != null) ? Reader.TotalTime : TimeSpan.MinValue;
+        public static TimeSpan TotalTime => (Reader != null) ? Reader.TotalTime : TimeSpan.Zero;
 
         #endregion
 
@@ -65,9 +65,9 @@ namespace MT_MusicPlayer.Common
         }
 
         /// <summary>
-        /// 再生
+        /// 再生準備
         /// </summary>
-        public static void Play()
+        public static void Standby()
         {
             if (MusicQueue.Count < 1) return;
 
@@ -77,7 +77,14 @@ namespace MT_MusicPlayer.Common
 
             WaveOut = new WaveOutEvent();
             WaveOut.Init(Reader);
-            WaveOut.Play();
+        }
+
+        /// <summary>
+        /// 再生
+        /// </summary>
+        public static void Play()
+        {
+            WaveOut?.Play();
         }
 
         /// <summary>
@@ -85,9 +92,7 @@ namespace MT_MusicPlayer.Common
         /// </summary>
         public static void Pause()
         {
-            if (WaveOut == null) return;
-
-            WaveOut.Pause();
+            WaveOut?.Pause();
         }
 
         /// <summary>
@@ -95,18 +100,17 @@ namespace MT_MusicPlayer.Common
         /// </summary>
         public static void Stop()
         {
-            if (WaveOut == null) return;
-
-            WaveOut.Stop();
+            WaveOut?.Stop();
+            if (Reader != null) Reader.Position = 0;
         }
 
         /// <summary>
-        /// 終了
+        /// 破棄する
         /// </summary>
-        public static void Exit()
+        public static void Destroy()
         {
-            if (Reader != null) Reader.Dispose();
-            if (WaveOut != null) WaveOut.Dispose();
+            Reader?.Dispose();
+            WaveOut?.Dispose();
         }
     }
 }

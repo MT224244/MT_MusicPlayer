@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace MT_MusicPlayer.ViewModels
@@ -59,6 +60,16 @@ namespace MT_MusicPlayer.ViewModels
 
         #endregion
 
+        #region コマンド
+
+        public ICommand PlayCommand => new RelayCommand(model.Play);
+        public ICommand PauseCommand => new RelayCommand(model.Pause);
+        public ICommand StopCommand => new RelayCommand(model.Stop);
+        public ICommand ShowControllerCommand => new RelayCommand(model.ShowController);
+        public ICommand ExitCommand => new RelayCommand(model.Exit);
+
+        #endregion
+
         /// <summary>
         /// モデル
         /// </summary>
@@ -67,7 +78,7 @@ namespace MT_MusicPlayer.ViewModels
         // コンストラクタ
         public ControllerViewModel()
         {
-            model = new ControllerModel();
+            model = ControllerModel.Instance;
 
             model.PropertyChanged += Model_PropertyChanged;
         }
