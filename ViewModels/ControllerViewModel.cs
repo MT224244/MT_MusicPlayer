@@ -9,13 +9,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Prism.Mvvm;
+using Prism.Commands;
+using System.Windows.Controls.Primitives;
 
 namespace MT_MusicPlayer.ViewModels
 {
     /// <summary>
     /// ControllerのViewModel
     /// </summary>
-    class ControllerViewModel : INotifyPropertyChanged
+    class ControllerViewModel : BindableBase
     {
         #region プロパティ
 
@@ -25,11 +28,7 @@ namespace MT_MusicPlayer.ViewModels
         public string Name
         {
             get => model.Name;
-            set
-            {
-                model.Name = value;
-                OnPropertyChanged(nameof(Name));
-            }
+            set => model.Name = value;
         }
 
         /// <summary>
@@ -38,11 +37,7 @@ namespace MT_MusicPlayer.ViewModels
         public TimeSpan CurrentTime
         {
             get => model.CurrentTime;
-            set
-            {
-                model.CurrentTime = value;
-                OnPropertyChanged(nameof(CurrentTime));
-            }
+            set => model.CurrentTime = value;
         }
 
         /// <summary>
@@ -51,22 +46,26 @@ namespace MT_MusicPlayer.ViewModels
         public TimeSpan TotalTime
         {
             get => model.TotalTime;
-            set
-            {
-                model.TotalTime = value;
-                OnPropertyChanged(nameof(TotalTime));
-            }
+            set => model.TotalTime = value;
+        }
+
+        public float Volume
+        {
+            get => model.Volume;
+            set => model.Volume = value;
         }
 
         #endregion
 
         #region コマンド
 
-        public ICommand PlayCommand => new RelayCommand(model.Play);
-        public ICommand PauseCommand => new RelayCommand(model.Pause);
-        public ICommand StopCommand => new RelayCommand(model.Stop);
-        public ICommand ShowControllerCommand => new RelayCommand(model.ShowController);
-        public ICommand ExitCommand => new RelayCommand(model.Exit);
+        public ICommand PlayCommand => new DelegateCommand(model.Play);
+        public ICommand PauseCommand => new DelegateCommand(model.Pause);
+        public ICommand StopCommand => new DelegateCommand(model.Stop);
+        public ICommand SeekBarMouseDownCommand => new DelegateCommand<MouseButtonEventArgs>(model.SeekBar_MouseDown);
+        public ICommand SeekBarMouseUpCommand => new DelegateCommand<MouseButtonEventArgs>(model.SeekBar_MouseUp);
+        public ICommand DropCommand => new DelegateCommand<DragEventArgs>(model.Drop);
+        public ICommand ClosingCommand => new DelegateCommand<CancelEventArgs>(model.Closing);
 
         #endregion
 
@@ -88,10 +87,6 @@ namespace MT_MusicPlayer.ViewModels
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e) => OnPropertyChanged(e.PropertyName);
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string name) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        private void Model_PropertyChanged(object sender, PropertyChangedEventArgs e) => OnPropertyChanged(e);
     }
 }

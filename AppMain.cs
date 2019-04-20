@@ -15,6 +15,8 @@ namespace MT_MusicPlayer
         /// </summary>
         private static Controller Controller;
 
+        private static TaskbarIcon TaskbarIcon;
+
         /// <summary>
         /// Application Entry Point.
         /// </summary>
@@ -22,6 +24,8 @@ namespace MT_MusicPlayer
         public static void Main()
         {
             App app = new App();
+
+            TaskbarIcon = new TaskbarIcon();
 
             Controller = new Controller();
             Controller.Show();

@@ -38,6 +38,21 @@ namespace MT_MusicPlayer.Common
         /// </summary>
         public static TimeSpan TotalTime => (Reader != null) ? Reader.TotalTime : TimeSpan.Zero;
 
+        /// <summary>
+        /// ボリューム
+        /// </summary>
+        public static float Volume
+        {
+            get => _Volume;
+            set
+            {
+                _Volume = value;
+
+                if (WaveOut != null) WaveOut.Volume = value;
+            }
+        }
+        private static float _Volume = 0.5f;
+
         #endregion
 
         private static AudioFileReader Reader = null;
@@ -65,6 +80,20 @@ namespace MT_MusicPlayer.Common
         }
 
         /// <summary>
+        /// 現在の再生時間をセットします
+        /// </summary>
+        /// <param name="currentTime"></param>
+        public static void SetCurrentTime(TimeSpan currentTime)
+        {
+            if (Reader != null) Reader.CurrentTime = currentTime;
+        }
+
+        public static void SetVolume(float volume)
+        {
+            if (WaveOut != null) WaveOut.Volume = volume;
+        }
+
+        /// <summary>
         /// 再生準備
         /// </summary>
         public static void Standby()
@@ -74,6 +103,7 @@ namespace MT_MusicPlayer.Common
             MusicQueue.TryDequeue(out Music music);
 
             Reader = new AudioFileReader(music.FilePath);
+            Reader.Volume = Volume;
 
             WaveOut = new WaveOutEvent();
             WaveOut.Init(Reader);

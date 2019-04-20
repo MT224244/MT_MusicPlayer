@@ -7,7 +7,8 @@
     xmlns:vm="clr-namespace:MT_MusicPlayer.ViewModels"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:behavior="clr-namespace:MT_MusicPlayer.Behaviors"
-    xmlns:tb="http://www.hardcodet.net/taskbar"
+    xmlns:common="clr-namespace:MT_MusicPlayer.Common"
+    xmlns:prism="http://www.codeplex.com/prism"
     xmlns:local="clr-namespace:MT_MusicPlayer"
     mc:Ignorable="d"
     Title="MainWindow" Height="450" Width="800"
@@ -18,6 +19,14 @@
     <i:Interaction.Behaviors>
         <behavior:ControllerBehavior/>
     </i:Interaction.Behaviors>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Drop">
+            <prism:InvokeCommandAction Command="{Binding DropCommand}"/>
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closing">
+            <prism:InvokeCommandAction Command="{Binding ClosingCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
         <StackPanel Orientation="Vertical">
@@ -30,23 +39,26 @@
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
-            <Slider
+            <common:SeekBar
+                Orientation="Horizontal"
                 Width="{Binding Width, RelativeSource={RelativeSource AncestorType=Grid}}"
                 Maximum="{Binding TotalTime, 
                 Converter={StaticResource TimeSpanToDoubleConverter}}"
                 Value="{Binding CurrentTime, 
-                Converter={StaticResource TimeSpanToDoubleConverter}, Mode=TwoWay}"/>
+                Converter={StaticResource TimeSpanToDoubleConverter}, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDown">
+                        <prism:InvokeCommandAction Command="{Binding SeekBarMouseDownCommand}"/>
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="MouseUp">
+                        <prism:InvokeCommandAction Command="{Binding SeekBarMouseUpCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </common:SeekBar>
             <Button Content="Play" Command="{Binding PlayCommand}"/>
             <Button Content="Pause" Command="{Binding PauseCommand}"/>
             <Button Content="Stop" Command="{Binding StopCommand}"/>
+            <common:SeekBar Orientation="Vertical" Height="70" Maximum="1" Value="{Binding Volume, Mode=TwoWay}"/>
         </StackPanel>
-        <tb:TaskbarIcon ToolTipText="MT MusicPlayer">
-            <tb:TaskbarIcon.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="表示" Command="{Binding ShowControllerCommand}"/>
-                    <MenuItem Header="終了" Command="{Binding ExitCommand}"/>
-                </ContextMenu>
-            </tb:TaskbarIcon.ContextMenu>
-        </tb:TaskbarIcon>
     </Grid>
 </Window>

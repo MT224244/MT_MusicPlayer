@@ -20,44 +20,16 @@ namespace MT_MusicPlayer.Behaviors
         {
             base.OnAttached();
 
-            MessagingCenter.Subscribe<ControllerModel>(this, "ShowController", model =>
-            {
-                AssociatedObject.Show();
-            });
-
-            AssociatedObject.Drop += AssociatedObject_Drop;
-            AssociatedObject.Closing += AssociatedObject_Closing;
+            MessagingCenter.Subscribe<TaskbarIconModel>(this, "ShowController", model => AssociatedObject.Show());
+            MessagingCenter.Subscribe<ControllerModel>(this, "HideController", model => AssociatedObject.Hide());
         }
 
         protected override void OnDetaching()
         {
             base.OnDetaching();
 
-            AssociatedObject.Drop -= AssociatedObject_Drop;
-            AssociatedObject.Closing -= AssociatedObject_Closing;
-        }
-
-        /// <summary>
-        /// D&D時処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AssociatedObject_Drop(object sender, DragEventArgs e)
-        {
-            SoundManager.Destroy();
-            SoundManager.AddQueue(e.Data.GetData(DataFormats.FileDrop) as string[]);
-            SoundManager.Standby();
-        }
-
-        /// <summary>
-        /// ウィンドウ終了前処理
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void AssociatedObject_Closing(object sender, CancelEventArgs e)
-        {
-            (sender as Window).Hide();
-            e.Cancel = true;
+            MessagingCenter.Unsubscribe<TaskbarIconModel>(this, "ShowController");
+            MessagingCenter.Unsubscribe<ControllerModel>(this, "HideController");
         }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using MT_MusicPlayer.Common;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace MT_MusicPlayer.Models
@@ -12,7 +15,7 @@ namespace MT_MusicPlayer.Models
     /// <summary>
     /// ControllerのModel
     /// </summary>
-    public class ControllerModel : INotifyPropertyChanged
+    public class ControllerModel : BindableBase
     {
         #region プロパティ
 
@@ -22,11 +25,7 @@ namespace MT_MusicPlayer.Models
         public string Name
         {
             get => _Name;
-            set
-            {
-                _Name = value;
-                OnPropertyChanged(nameof(Name));
-            }
+            set => SetProperty(ref _Name, value);
         }
         private string _Name;
 
@@ -36,11 +35,7 @@ namespace MT_MusicPlayer.Models
         public TimeSpan CurrentTime
         {
             get => _CurrentTime;
-            set
-            {
-                _CurrentTime = value;
-                OnPropertyChanged(nameof(CurrentTime));
-            }
+            set => SetProperty(ref _CurrentTime, value);
         }
         private TimeSpan _CurrentTime = TimeSpan.Zero;
 
@@ -50,25 +45,38 @@ namespace MT_MusicPlayer.Models
         public TimeSpan TotalTime
         {
             get => _TotalTime;
-            set
-            {
-                _TotalTime = value;
-                OnPropertyChanged(nameof(TotalTime));
-            }
+            set => SetProperty(ref _TotalTime, value);
         }
         private TimeSpan _TotalTime = TimeSpan.Zero;
+
+        /// <summary>
+        /// ボリューム
+        /// </summary>
+        public float Volume
+        {
+            get => _Volume;
+            set
+            {
+                SetProperty(ref _Volume, value);
+                SoundManager.SetVolume(value);
+                Console.WriteLine($"{_Volume}");
+            }
+        }
+        private float _Volume = 0.5f;
 
         #endregion
 
         public static ControllerModel Instance = Instance ?? new ControllerModel();
 
+        private bool IsSeekbarMouseDown = false;
+
         // コンストラクタ
         private ControllerModel()
         {
             DispatcherTimer timer = new DispatcherTimer(
-                interval:   TimeSpan.FromMilliseconds(10),
-                priority:   DispatcherPriority.Send,
-                callback:   Timer_Tick,
+                interval: TimeSpan.FromMilliseconds(10),
+                priority: DispatcherPriority.Send,
+                callback: Timer_Tick,
                 dispatcher: Dispatcher.CurrentDispatcher);
 
             timer.Start();
@@ -80,9 +88,33 @@ namespace MT_MusicPlayer.Models
 
         public void Stop() => SoundManager.Stop();
 
-        public void ShowController() => MessagingCenter.Send(this, "ShowController");
+        public void SeekBar_MouseDown(MouseButtonEventArgs e)
+        {
+            IsSeekbarMouseDown = true;
+            Console.WriteLine("TrackMouseDown");
+        }
 
-        public void Exit() => AppMain.Exit();
+        public void SeekBar_MouseUp(MouseButtonEventArgs e)
+        {
+            IsSeekbarMouseDown = false;
+            SoundManager.SetCurrentTime(CurrentTime);
+            Console.WriteLine("TrackMouseUp");
+        }
+
+        public void Drop(DragEventArgs e)
+        {
+            SoundManager.Destroy();
+            SoundManager.AddQueue(e.Data.GetData(DataFormats.FileDrop) as string[]);
+            SoundManager.Standby();
+            Name = SoundManager.Name;
+            TotalTime = SoundManager.TotalTime;
+        }
+
+        public void Closing(CancelEventArgs e)
+        {
+            MessagingCenter.Send(this, "HideController");
+            e.Cancel = true;
+        }
 
         /// <summary>
         /// タイマー
@@ -91,13 +123,7 @@ namespace MT_MusicPlayer.Models
         /// <param name="e"></param>
         private void Timer_Tick(object sender, EventArgs e)
         {
-            Name = SoundManager.Name;
-            CurrentTime = SoundManager.CurrentTime;
-            TotalTime = SoundManager.TotalTime;
+            if (!IsSeekbarMouseDown) CurrentTime = SoundManager.CurrentTime;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string name) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
