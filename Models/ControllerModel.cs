@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace MT_MusicPlayer.Models
@@ -59,10 +60,16 @@ namespace MT_MusicPlayer.Models
             {
                 SetProperty(ref _Volume, value);
                 SoundManager.SetVolume(value);
-                Console.WriteLine($"{_Volume}");
             }
         }
         private float _Volume = 0.5f;
+
+        public BitmapFrame AlbumArt
+        {
+            get => _AlbumArt;
+            set => SetProperty(ref _AlbumArt, value);
+        }
+        private BitmapFrame _AlbumArt = null;
 
         #endregion
 
@@ -91,14 +98,12 @@ namespace MT_MusicPlayer.Models
         public void SeekBar_MouseDown(MouseButtonEventArgs e)
         {
             IsSeekbarMouseDown = true;
-            Console.WriteLine("TrackMouseDown");
         }
 
         public void SeekBar_MouseUp(MouseButtonEventArgs e)
         {
             IsSeekbarMouseDown = false;
             SoundManager.SetCurrentTime(CurrentTime);
-            Console.WriteLine("TrackMouseUp");
         }
 
         public void Drop(DragEventArgs e)
@@ -108,6 +113,7 @@ namespace MT_MusicPlayer.Models
             SoundManager.Standby();
             Name = SoundManager.Name;
             TotalTime = SoundManager.TotalTime;
+            AlbumArt = SoundManager.AlbumArt;
         }
 
         public void Closing(CancelEventArgs e)

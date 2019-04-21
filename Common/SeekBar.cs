@@ -13,71 +13,61 @@ namespace MT_MusicPlayer.Common
 {
     public class SeekBar : Slider
     {
-        private Border track;
         private bool IsTrackMouseDown = false;
-
-        protected override void OnInitialized(EventArgs e)
-        {
-            base.OnInitialized(e);
-
-            ApplyTemplate();
-
-            track = Template.FindName("border", this) as Border;
-            if (track != null)
-            {
-                track.PreviewMouseLeftButtonDown += Track_MouseLeftButtonDown;
-                track.PreviewMouseMove += Track_MouseMove;
-                track.PreviewMouseLeftButtonUp += Track_MouseLeftButtonUp;
-            }
-        }
-
-        #region Border イベントハンドラ
 
         /// <summary>
         /// マウス左ボタンプレス時処理
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Track_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
+            base.OnPreviewMouseLeftButtonDown(e);
+
             IsTrackMouseDown = true;
 
             Value = CalcValue(e.GetPosition(this));
 
             OnTrackMouseDown(e);
 
-            track.CaptureMouse();
+            CaptureMouse();
         }
 
         /// <summary>
         /// マウス移動時処理
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Track_MouseMove(object sender, MouseEventArgs e)
+        protected override void OnPreviewMouseMove(MouseEventArgs e)
         {
+            base.OnPreviewMouseMove(e);
+
             if (!IsTrackMouseDown) return;
 
-            Value = CalcValue(e.GetPosition(this));
+            double val = CalcValue(e.GetPosition(this));
 
-            OnTrackMouseMove(e);
+            Value = CalcValue(e.GetPosition(this));
         }
 
         /// <summary>
         /// マウス左ボタンリリース時処理
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Track_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
         {
+            base.OnPreviewMouseLeftButtonUp(e);
+
             IsTrackMouseDown = false;
 
             OnTrackMouseUp(e);
 
-            track.ReleaseMouseCapture();
+            ReleaseMouseCapture();
         }
 
-        #endregion
+        protected override void OnValueChanged(double oldValue, double newValue)
+        {
+            if (newValue < 0) Value = 0;
+
+            base.OnValueChanged(oldValue, newValue);
+        }
 
         /// <summary>
         /// Thumbの座標計算
@@ -86,6 +76,10 @@ namespace MT_MusicPlayer.Common
         /// <returns></returns>
         private double CalcValue(Point pos)
         {
+            Thumb thumb = Template.FindName("Thumb", this) as Thumb;
+
+            double val = 0;
+
             if (Orientation == Orientation.Horizontal)
             {
                 double x = pos.X;
@@ -93,7 +87,7 @@ namespace MT_MusicPlayer.Common
                 if (x < 0) x = 0;
                 else if (x > ActualWidth) x = ActualWidth;
 
-                return (x / ActualWidth) * Maximum;
+                val = ((x - (thumb.ActualWidth / 2)) / (ActualWidth - thumb.ActualWidth)) * Maximum;
             }
             else
             {
@@ -102,8 +96,13 @@ namespace MT_MusicPlayer.Common
                 if (y < 0) y = 0;
                 else if (y > ActualHeight) y = ActualHeight;
 
-                return (y / ActualHeight) * -1 + Maximum;
+                val = -((y - (thumb.ActualHeight / 2)) / (ActualHeight - thumb.ActualHeight)) + Maximum;
             }
+
+            if (val < 0) val = 0;
+            else if (val > Maximum) val = Maximum;
+
+            return val;
         }
 
         public new event MouseButtonEventHandler MouseDown;
@@ -111,8 +110,5 @@ namespace MT_MusicPlayer.Common
 
         public new event MouseButtonEventHandler MouseUp;
         private void OnTrackMouseUp(MouseButtonEventArgs e) => MouseUp?.Invoke(this, e);
-
-        public new event MouseEventHandler MouseMove;
-        private void OnTrackMouseMove(MouseEventArgs e) => MouseMove?.Invoke(this, e);
     }
 }

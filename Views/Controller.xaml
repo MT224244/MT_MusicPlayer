@@ -11,11 +11,9 @@
     xmlns:prism="http://www.codeplex.com/prism"
     xmlns:local="clr-namespace:MT_MusicPlayer"
     mc:Ignorable="d"
+    prism:ViewModelLocator.AutoWireViewModel="True"
     Title="MainWindow" Height="450" Width="800"
     AllowDrop="True">
-    <Window.DataContext>
-        <vm:ControllerViewModel/>
-    </Window.DataContext>
     <i:Interaction.Behaviors>
         <behavior:ControllerBehavior/>
     </i:Interaction.Behaviors>
@@ -47,10 +45,10 @@
                 Value="{Binding CurrentTime, 
                 Converter={StaticResource TimeSpanToDoubleConverter}, Mode=TwoWay}">
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseDown">
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
                         <prism:InvokeCommandAction Command="{Binding SeekBarMouseDownCommand}"/>
                     </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseUp">
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
                         <prism:InvokeCommandAction Command="{Binding SeekBarMouseUpCommand}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
@@ -59,6 +57,10 @@
             <Button Content="Pause" Command="{Binding PauseCommand}"/>
             <Button Content="Stop" Command="{Binding StopCommand}"/>
             <common:SeekBar Orientation="Vertical" Height="70" Maximum="1" Value="{Binding Volume, Mode=TwoWay}"/>
+            <Image
+                Width="{Binding Width, RelativeSource={RelativeSource AncestorType=Grid}}"
+                Height="{Binding Height, RelativeSource={RelativeSource AncestorType=Grid}}"
+                Source="{Binding AlbumArt}"/>
         </StackPanel>
     </Grid>
 </Window>

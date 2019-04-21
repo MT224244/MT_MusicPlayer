@@ -12,6 +12,8 @@ using System.Windows.Threading;
 using Prism.Mvvm;
 using Prism.Commands;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace MT_MusicPlayer.ViewModels
 {
@@ -53,6 +55,11 @@ namespace MT_MusicPlayer.ViewModels
         {
             get => model.Volume;
             set => model.Volume = value;
+        }
+
+        public BitmapFrame AlbumArt
+        {
+            get => model.AlbumArt;
         }
 
         #endregion
