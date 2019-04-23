@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using TagLib;
-using Queue = System.Collections.Concurrent.ConcurrentQueue<MT_MusicPlayer.Models.Music>;
+using Queue = System.Collections.ObjectModel.ObservableCollection<MT_MusicPlayer.Models.Music>;
 
 namespace MT_MusicPlayer.Common
 {
@@ -86,7 +86,7 @@ namespace MT_MusicPlayer.Common
                         FilePath = path,
                         TotalTime = reader.TotalTime
                     };
-                    MusicQueue.Enqueue(music);
+                    MusicQueue.Add(music);
                 }
             }
         }
@@ -112,58 +112,59 @@ namespace MT_MusicPlayer.Common
         {
             if (MusicQueue.Count < 1) return;
 
-            MusicQueue.TryDequeue(out Music music);
+            Music music = MusicQueue[MusicQueue.Count() - 1];
+            //MusicQueue.RemoveAt(MusicQueue.Count() - 1);
 
             Tag tag = TagLib.File.Create(music.FilePath).Tag;
             _AlbumArt = (tag.Pictures.Count() > 0) ? AlbumArtConvert(tag.Pictures[0]) : null;
 
-            Console.WriteLine(
-                $"Album: {tag.Album}\n" +
-                $"AlbumArtists: {string.Join(", ", tag.AlbumArtists)}\n" +
-                $"AlbumArtistsSort: {string.Join(", ", tag.AlbumArtistsSort)}\n" +
-                $"AlbumSort: {tag.AlbumSort}\n" +
-                $"AmazonId: {tag.AmazonId}\n" +
-                $"BeatsPerMinutes: {tag.BeatsPerMinute}\n" +
-                $"Comment: {tag.Comment}\n" +
-                $"Composers: {string.Join(", ", tag.Composers)}\n" +
-                $"ComposersSort: {string.Join(", ", tag.ComposersSort)}\n" +
-                $"Conductor: {tag.Conductor}\n" +
-                $"Copyright: {tag.Copyright}\n" +
-                $"Disc: {tag.Disc}\n" +
-                $"DiscCount: {tag.DiscCount}\n" +
-                $"FirstAlbumArtist: {tag.FirstAlbumArtist}\n" +
-                $"FirstAlbumArtistSort: {tag.FirstAlbumArtistSort}\n" +
-                $"FirstComposer: {tag.FirstComposer}\n" +
-                $"FirstComposerSort: {tag.FirstComposerSort}\n" +
-                $"FirstGenre: {tag.FirstGenre}\n" +
-                $"FirstPerformer: {tag.FirstPerformer}\n" +
-                $"FirstPerformerSort: {tag.FirstPerformerSort}\n" +
-                $"Genres: {string.Join(", ", tag.Genres)}\n" +
-                $"Grouping: {tag.Grouping}\n" +
-                $"IsEmpty: {tag.IsEmpty}\n" +
-                $"JoinedAlbumArtists: {tag.JoinedAlbumArtists}\n" +
-                $"JoinedComposers: {tag.JoinedComposers}\n" +
-                $"JoinedGenres: {tag.JoinedGenres}\n" +
-                $"JoinedPerformers: {tag.JoinedPerformers}\n" +
-                $"JoinedPerformersSort: {tag.JoinedPerformersSort}\n" +
-                $"Lyrics: {tag.Lyrics}\n" +
-                $"MusicBrainzArtistId: {tag.MusicBrainzArtistId}\n" +
-                $"MusicBrainzDiscId: {tag.MusicBrainzDiscId}\n" +
-                $"MusicBrainzReleaseArtistId: {tag.MusicBrainzReleaseArtistId}\n" +
-                $"MusicBrainzReleaseCountry: {tag.MusicBrainzReleaseCountry}\n" +
-                $"MusicBrainzReleaseId: {tag.MusicBrainzReleaseId}\n" +
-                $"MusicBrainzReleaseStatus: {tag.MusicBrainzReleaseStatus}\n" +
-                $"MusicBrainzReleaseType: {tag.MusicBrainzReleaseType}\n" +
-                $"MusicBrainzTrackId: {tag.MusicBrainzTrackId}\n" +
-                $"MusicIpId: {tag.MusicIpId}\n" +
-                $"Performers: {string.Join(", ", tag.Performers)}\n" +
-                $"PerformersSort: {string.Join(", ", tag.PerformersSort)}\n" +
-                $"TagTypes: {tag.TagTypes}\n" +
-                $"Title: {tag.Title}\n" +
-                $"TitleSort: {tag.TitleSort}\n" +
-                $"Track: {tag.Track}\n" +
-                $"TrackCount: {tag.TrackCount}\n" +
-                $"Year: {tag.Year}");
+            //Console.WriteLine(
+            //    $"Album: {tag.Album}\n" +
+            //    $"AlbumArtists: {string.Join(", ", tag.AlbumArtists)}\n" +
+            //    $"AlbumArtistsSort: {string.Join(", ", tag.AlbumArtistsSort)}\n" +
+            //    $"AlbumSort: {tag.AlbumSort}\n" +
+            //    $"AmazonId: {tag.AmazonId}\n" +
+            //    $"BeatsPerMinutes: {tag.BeatsPerMinute}\n" +
+            //    $"Comment: {tag.Comment}\n" +
+            //    $"Composers: {string.Join(", ", tag.Composers)}\n" +
+            //    $"ComposersSort: {string.Join(", ", tag.ComposersSort)}\n" +
+            //    $"Conductor: {tag.Conductor}\n" +
+            //    $"Copyright: {tag.Copyright}\n" +
+            //    $"Disc: {tag.Disc}\n" +
+            //    $"DiscCount: {tag.DiscCount}\n" +
+            //    $"FirstAlbumArtist: {tag.FirstAlbumArtist}\n" +
+            //    $"FirstAlbumArtistSort: {tag.FirstAlbumArtistSort}\n" +
+            //    $"FirstComposer: {tag.FirstComposer}\n" +
+            //    $"FirstComposerSort: {tag.FirstComposerSort}\n" +
+            //    $"FirstGenre: {tag.FirstGenre}\n" +
+            //    $"FirstPerformer: {tag.FirstPerformer}\n" +
+            //    $"FirstPerformerSort: {tag.FirstPerformerSort}\n" +
+            //    $"Genres: {string.Join(", ", tag.Genres)}\n" +
+            //    $"Grouping: {tag.Grouping}\n" +
+            //    $"IsEmpty: {tag.IsEmpty}\n" +
+            //    $"JoinedAlbumArtists: {tag.JoinedAlbumArtists}\n" +
+            //    $"JoinedComposers: {tag.JoinedComposers}\n" +
+            //    $"JoinedGenres: {tag.JoinedGenres}\n" +
+            //    $"JoinedPerformers: {tag.JoinedPerformers}\n" +
+            //    $"JoinedPerformersSort: {tag.JoinedPerformersSort}\n" +
+            //    $"Lyrics: {tag.Lyrics}\n" +
+            //    $"MusicBrainzArtistId: {tag.MusicBrainzArtistId}\n" +
+            //    $"MusicBrainzDiscId: {tag.MusicBrainzDiscId}\n" +
+            //    $"MusicBrainzReleaseArtistId: {tag.MusicBrainzReleaseArtistId}\n" +
+            //    $"MusicBrainzReleaseCountry: {tag.MusicBrainzReleaseCountry}\n" +
+            //    $"MusicBrainzReleaseId: {tag.MusicBrainzReleaseId}\n" +
+            //    $"MusicBrainzReleaseStatus: {tag.MusicBrainzReleaseStatus}\n" +
+            //    $"MusicBrainzReleaseType: {tag.MusicBrainzReleaseType}\n" +
+            //    $"MusicBrainzTrackId: {tag.MusicBrainzTrackId}\n" +
+            //    $"MusicIpId: {tag.MusicIpId}\n" +
+            //    $"Performers: {string.Join(", ", tag.Performers)}\n" +
+            //    $"PerformersSort: {string.Join(", ", tag.PerformersSort)}\n" +
+            //    $"TagTypes: {tag.TagTypes}\n" +
+            //    $"Title: {tag.Title}\n" +
+            //    $"TitleSort: {tag.TitleSort}\n" +
+            //    $"Track: {tag.Track}\n" +
+            //    $"TrackCount: {tag.TrackCount}\n" +
+            //    $"Year: {tag.Year}");
 
             Reader = new AudioFileReader(music.FilePath);
             Reader.Volume = Volume;

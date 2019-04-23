@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Queue = System.Collections.ObjectModel.ObservableCollection<MT_MusicPlayer.Models.Music>;
 
 namespace MT_MusicPlayer.Models
 {
@@ -19,6 +20,8 @@ namespace MT_MusicPlayer.Models
     public class ControllerModel : BindableBase
     {
         #region プロパティ
+
+        public Queue MusicList => SoundManager.MusicQueue;
 
         /// <summary>
         /// 曲名
@@ -104,6 +107,11 @@ namespace MT_MusicPlayer.Models
         {
             IsSeekbarMouseDown = false;
             SoundManager.SetCurrentTime(CurrentTime);
+        }
+
+        public void MusicDoubleClick(string name)
+        {
+            MessageBox.Show(name);
         }
 
         public void Drop(DragEventArgs e)

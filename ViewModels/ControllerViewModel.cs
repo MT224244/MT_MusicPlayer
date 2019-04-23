@@ -14,6 +14,7 @@ using Prism.Commands;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media.Imaging;
 using System.IO;
+using Queue = System.Collections.ObjectModel.ObservableCollection<MT_MusicPlayer.Models.Music>;
 
 namespace MT_MusicPlayer.ViewModels
 {
@@ -23,6 +24,8 @@ namespace MT_MusicPlayer.ViewModels
     class ControllerViewModel : BindableBase
     {
         #region プロパティ
+
+        public Queue MusicList => model.MusicList;
 
         /// <summary>
         /// 曲名
@@ -71,6 +74,7 @@ namespace MT_MusicPlayer.ViewModels
         public ICommand StopCommand => new DelegateCommand(model.Stop);
         public ICommand SeekBarMouseDownCommand => new DelegateCommand<MouseButtonEventArgs>(model.SeekBar_MouseDown);
         public ICommand SeekBarMouseUpCommand => new DelegateCommand<MouseButtonEventArgs>(model.SeekBar_MouseUp);
+        public ICommand MusicDoubleClick => new DelegateCommand<string>(model.MusicDoubleClick);
         public ICommand DropCommand => new DelegateCommand<DragEventArgs>(model.Drop);
         public ICommand ClosingCommand => new DelegateCommand<CancelEventArgs>(model.Closing);
 
