@@ -74,7 +74,7 @@ namespace MT_MusicPlayer.ViewModels
         public ICommand StopCommand => new DelegateCommand(model.Stop);
         public ICommand SeekBarMouseDownCommand => new DelegateCommand<MouseButtonEventArgs>(model.SeekBar_MouseDown);
         public ICommand SeekBarMouseUpCommand => new DelegateCommand<MouseButtonEventArgs>(model.SeekBar_MouseUp);
-        public ICommand MusicDoubleClick => new DelegateCommand<string>(model.MusicDoubleClick);
+        public ICommand MusicDoubleClick => new DelegateCommand<Music>(model.MusicDoubleClick);
         public ICommand DropCommand => new DelegateCommand<DragEventArgs>(model.Drop);
         public ICommand ClosingCommand => new DelegateCommand<CancelEventArgs>(model.Closing);
 

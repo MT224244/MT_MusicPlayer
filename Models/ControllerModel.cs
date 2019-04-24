@@ -1,4 +1,5 @@
 ﻿using MT_MusicPlayer.Common;
+using NAudio.Dsp;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -65,7 +66,7 @@ namespace MT_MusicPlayer.Models
                 SoundManager.SetVolume(value);
             }
         }
-        private float _Volume = 0.5f;
+        private float _Volume = SoundManager.Volume;
 
         public BitmapFrame AlbumArt
         {
@@ -109,9 +110,14 @@ namespace MT_MusicPlayer.Models
             SoundManager.SetCurrentTime(CurrentTime);
         }
 
-        public void MusicDoubleClick(string name)
+        public void MusicDoubleClick(Music music)
         {
-            MessageBox.Show(name);
+            SoundManager.Destroy();
+            SoundManager.SelectMusic(music);
+            Name = SoundManager.Name;
+            TotalTime = SoundManager.TotalTime;
+            AlbumArt = SoundManager.AlbumArt;
+            SoundManager.Play();
         }
 
         public void Drop(DragEventArgs e)

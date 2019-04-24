@@ -53,7 +53,7 @@ namespace MT_MusicPlayer.Common
                 if (WaveOut != null) WaveOut.Volume = value;
             }
         }
-        private static float _Volume = 0.5f;
+        private static float _Volume = 0.2f;
 
         public static BitmapFrame AlbumArt => _AlbumArt;
         private static BitmapFrame _AlbumArt = null;
@@ -103,6 +103,18 @@ namespace MT_MusicPlayer.Common
         public static void SetVolume(float volume)
         {
             if (WaveOut != null) WaveOut.Volume = volume;
+        }
+
+        public static void SelectMusic(Music music)
+        {
+            Tag tag = TagLib.File.Create(music.FilePath).Tag;
+            _AlbumArt = (tag.Pictures.Count() > 0) ? AlbumArtConvert(tag.Pictures[0]) : null;
+
+            Reader = new AudioFileReader(music.FilePath);
+            Reader.Volume = Volume;
+
+            WaveOut = new WaveOutEvent();
+            WaveOut.Init(Reader);
         }
 
         /// <summary>

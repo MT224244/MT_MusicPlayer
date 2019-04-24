@@ -28,8 +28,8 @@
 
     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="0.7*"/>
+            <RowDefinition Height="0.3*"/>
             <RowDefinition Height="140"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" VerticalAlignment="Stretch">
@@ -40,27 +40,31 @@
         </Grid>
         <ListBox
             ItemsSource="{Binding MusicList}"
-            Height="100"
             HorizontalContentAlignment="Stretch"
             Grid.Row="1"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <ContentControl>
-                        <Grid>
+                        <Grid Background="Transparent">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Stretch" Grid.Column="0"/>
-                            <TextBlock Text="{Binding TotalTime, StringFormat={}{0:hh':'mm':'ss}}" HorizontalAlignment="Right" Grid.Column="1"/>
+                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Stretch" Grid.Column="0" Margin="10,0,0,0"/>
+                            <TextBlock Text="{Binding TotalTime, StringFormat={}{0:hh':'mm':'ss}}" HorizontalAlignment="Right" Grid.Column="1" Margin="0,0,10,0"/>
                         </Grid>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDoubleClick">
                                 <i:InvokeCommandAction
                                         Command="{Binding DataContext.MusicDoubleClick, 
                                         RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                        CommandParameter="{Binding FilePath}"/>
+                                        CommandParameter="{Binding}"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ContentControl>
